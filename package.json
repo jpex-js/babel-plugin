@@ -1,0 +1,60 @@
+{
+  "name": "@jpex/babel-plugin",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "yarn build && BABEL_DISABLE_CACHE=1 ava",
+    "test:debug": "ava debug",
+    "coverage": "nyc ava",
+    "lint": "eslint './src/**/*.ts' && tsc --noEmit",
+    "build:prepare": "rm -rf dist",
+    "build:js": "rollup --config ./rollup.config.js",
+    "build": "yarn build:prepare && yarn build:js",
+    "prepublishOnly": "yarn build"
+  },
+  "repository": "git@github.com:jpex-js/babel.git",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Jack Ellis <jack.ellis@godaddy.com>",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint --edit"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "src/**/*.{js,ts}": [
+        "eslint -c ./.eslintrc.js",
+        "git add"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@ava/babel": "^1.0.1",
+    "@babel/core": "^7.11.4",
+    "@babel/helper-plugin-utils": "^7.10.4",
+    "@babel/cli": "^7.10.5",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.10.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-typescript": "^7.10.4",
+    "@babel/register": "^7.10.5",
+    "@commitlint/config-conventional": "^9.1.2",
+    "@team-griffin/eslint-config": "^3.3.0",
+    "@types/babel__core": "^7.1.9",
+    "@types/node": "^14.6.1",
+    "@typescript-eslint/eslint-plugin": "^3.10.1",
+    "@typescript-eslint/parser": "^3.10.1",
+    "ava": "^3.12.1",
+    "eslint": "^7.7.0",
+    "jpex": "file:.yalc/jpex",
+    "rollup": "^2.26.6",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "typescript": "^4.0.2"
+  }
+}
