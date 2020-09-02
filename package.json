@@ -5,14 +5,17 @@
   "scripts": {
     "test": "yarn build && BABEL_DISABLE_CACHE=1 ava",
     "test:debug": "ava debug",
-    "coverage": "nyc ava",
     "lint": "eslint './src/**/*.ts' && tsc --noEmit",
     "build:prepare": "rm -rf dist",
     "build:js": "rollup --config ./rollup.config.js",
     "build": "yarn build:prepare && yarn build:js",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "yarn build",
+    "semantic-release": "semantic-release"
   },
-  "repository": "git@github.com:jpex-js/babel.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jpex-js/babel-plugin.git"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -34,9 +37,9 @@
   },
   "devDependencies": {
     "@ava/babel": "^1.0.1",
+    "@babel/cli": "^7.10.5",
     "@babel/core": "^7.11.4",
     "@babel/helper-plugin-utils": "^7.10.4",
-    "@babel/cli": "^7.10.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.10.4",
     "@babel/plugin-proposal-optional-chaining": "^7.11.0",
@@ -55,6 +58,7 @@
     "rollup": "^2.26.6",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-node-resolve": "^5.2.0",
+    "semantic-release": "^17.1.1",
     "typescript": "^4.0.2"
   }
 }
