@@ -10,5 +10,7 @@ script:
   - yarn test
 
 deploy:
-  - yarn install
-  - yarn semantic-release
+  provider: script
+  skip_cleanup: true
+  script:
+    - yarn semantic-release
