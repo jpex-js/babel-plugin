@@ -1,5 +1,5 @@
 {
-  "name": "@jpex/babel-plugin",
+  "name": "@jpex-js/babel-plugin",
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
@@ -50,8 +50,8 @@
     "@team-griffin/eslint-config": "^3.3.0",
     "@types/babel__core": "^7.1.9",
     "@types/node": "^14.6.1",
-    "@typescript-eslint/eslint-plugin": "^3.10.1",
-    "@typescript-eslint/parser": "^3.10.1",
+    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/parser": "^4.2.0",
     "ava": "^3.12.1",
     "eslint": "^7.7.0",
     "jpex": "file:.yalc/jpex",
