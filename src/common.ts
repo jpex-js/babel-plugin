@@ -49,7 +49,9 @@ const shouldUsePublicPath = (state: TypeSourceState, parent: any) => {
 };
 const typeSourceVisitor: Visitor<TypeSourceState> = {
   TSType(path, state) {
-    // FIXME: I can't work out what type of node `parent` should be
+    if (state.name) {
+      return;
+    }
     const parent = path.parent as any;
     const parentName: string = parent?.id?.name;
     if (parentName !== state.typeName) {
@@ -65,6 +67,9 @@ const typeSourceVisitor: Visitor<TypeSourceState> = {
     state.name = id;
   },
   TSInterfaceDeclaration(path, state) {
+    if (state.name) {
+      return;
+    }
     if (path.node.id.name !== state.typeName) {
       return;
     }
@@ -80,6 +85,9 @@ const typeSourceVisitor: Visitor<TypeSourceState> = {
     state.name = id;
   },
   ImportSpecifier(path, state) {
+    if (state.name) {
+      return;
+    }
     if (path.node.local.name !== state.typeName) {
       return;
     }
@@ -111,6 +119,19 @@ export const getConcreteTypeName = (
     if (name == null) {
       return null;
     }
+
+    // if we're dealing with a node module or global type, we can deal with it right here
+    if (name === 'NodeModule' || name === 'Global') {
+      const param: any = typeNode.typeParameters?.params?.[0];
+      const value = param?.literal?.value;
+      if (value) {
+        if (name === 'Global') {
+          return `type:global:${value}`;
+        }
+        return value;
+      }
+    }
+
     const state = {
       filename,
       publicPath,
