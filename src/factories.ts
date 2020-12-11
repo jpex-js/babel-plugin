@@ -5,6 +5,7 @@ import {
   isJpexCall,
   State,
   getTypeParameter,
+  getTypeofNode,
 } from './common';
 
 const FACTORY_METHODS = [
@@ -37,8 +38,18 @@ const factories = (
   // if there is only 1 arg then we can't possibly have been given the name
   // if the first arg isn't a string, then we also don't have a name
   const type = getTypeParameter(path);
+  let name: string;
 
-  const name = getConcreteTypeName(type, filename, publicPath, programPath);
+  if (type == null) {
+    name = getTypeofNode(args[0], {
+      filename,
+      publicPath,
+      identifier,
+    }, programPath);
+  } else {
+    name = getConcreteTypeName(type, filename, publicPath, programPath);
+  }
+
   if (name != null) {
     args.unshift(t.stringLiteral(name));
   }
