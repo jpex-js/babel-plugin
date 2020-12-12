@@ -5,21 +5,37 @@ test('class-inference', async(t) => {
   const code = `
     import jpex from 'jpex';
 
-    class Foo {
+    interface IFoo {}
+
+    class Foo implements IFoo {
       constructor(window: Window) {
         this.window = window;
       }
     }
 
     jpex.service(Foo);
+    jpex.service(Foo, {});
 
-    jpex.service(class Bah {
+    jpex.service(class Bah implements IFoo {
       constructor(window: Window) {
         this.window = window;
       }
     });
+    jpex.service(class Baz implements IFoo {}, {});
 
-    const result = jpex.resolve<Foo>();
+    class NoInterfaces {
+      constructor(window: Window) {
+        this.window = window;
+      }
+    }
+
+    jpex.service(NoInterfaces);
+
+    class ExplicityTyping {}
+
+    jpex.service<ExplicityTyping>(ExplicitTyping);
+
+    const result = jpex.resolve<IFoo>();
   `;
   const { code: actual } = await transformAsync(code, {
     filename: './code.ts',

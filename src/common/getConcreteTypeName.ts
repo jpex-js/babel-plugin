@@ -93,9 +93,9 @@ export default function getConcreteTypeName(
   programPath: NodePath<t.Program>,
 ) {
   // for a type reference we need to find where it is declared first
-  if (t.isTSTypeReference(typeNode)) {
+  if (t.isTSTypeReference(typeNode) || t.isTSExpressionWithTypeArguments(typeNode)) {
     // @ts-ignore
-    const name: string = typeNode?.typeName?.name;
+    const name: string = typeNode.typeName?.name ?? typeNode.expression?.name;
     if (name == null) {
       return null;
     }
