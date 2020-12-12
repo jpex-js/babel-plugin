@@ -29,7 +29,7 @@ export default function getTypeofNode(
     publicPath,
   }: State,
   programPath: NodePath<t.Program>,
-) {
+): string {
   if (t.isIdentifier(node)) {
     const state = {
       name: <string>null,

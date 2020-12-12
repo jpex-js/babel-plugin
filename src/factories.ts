@@ -6,6 +6,7 @@ import {
   State,
   getTypeParameter,
   getTypeofNode,
+  getImplements,
 } from './common';
 
 const FACTORY_METHODS = [
@@ -39,6 +40,7 @@ const factories = (
   // if the first arg isn't a string, then we also don't have a name
   const type = getTypeParameter(path);
   let name: string;
+  let aliases: string[];
 
   if (type == null) {
     name = getTypeofNode(args[0], {
@@ -46,8 +48,24 @@ const factories = (
       publicPath,
       identifier,
     }, programPath);
+    if (name) {
+      aliases = getImplements(
+        args[0],
+        filename,
+        publicPath,
+        programPath,
+      );
+    }
   } else {
     name = getConcreteTypeName(type, filename, publicPath, programPath);
+    if (name) {
+      aliases = getImplements(
+        type,
+        filename,
+        publicPath,
+        programPath,
+      );
+    }
   }
 
   if (name != null) {
@@ -61,6 +79,21 @@ const factories = (
     const arg = path.get('arguments.1') as NodePath<any>;
     const deps = extractFunctionParameterTypes(programPath, arg, filename, publicPath);
     path.node.arguments.splice(1, 0, t.arrayExpression(deps.map((dep) => t.stringLiteral(dep))));
+
+    if (aliases != null) {
+      const property = t.objectProperty(
+        t.stringLiteral('alias'),
+        t.arrayExpression(
+          aliases.map((alias) => t.stringLiteral(alias)),
+        ),
+      );
+      const arg = args[3];
+      if (arg == null) {
+        args.push(t.objectExpression([ property ]));
+      } else {
+        arg.properties.push(property);
+      }
+    }
   }
 };
 
