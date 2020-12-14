@@ -1,15 +1,15 @@
-import { resolve } from 'path';
+import { NodePath, Visitor } from '@babel/core';
 import { declare } from '@babel/helper-plugin-utils';
-import handleFactoryCalls from './factories';
-import handleResolveCall from './resolve';
-import handleResolveWithCall from './resolveWith';
+import { resolve } from 'path';
 import handleAliasCall from './alias';
+import handleClearCache from './clearCache';
 import handleEncaseCall from './encase';
+import handleFactoryCalls from './factories';
 import handleInferCall from './infer';
 import handleRawCall from './raw';
-import handleUseResolve from './useResolve';
-import handleClearCache from './clearCache';
-import { Visitor, NodePath } from '@babel/core';
+import handleResolveCall from './resolve';
+import handleResolveWithCall from './resolveWith';
+import reactJpex from './react-jpex';
 
 declare const require: any;
 declare const process: any;
@@ -53,7 +53,7 @@ const mainVisitor: Visitor<{
     handleInferCall(programPath, path, opts);
     handleRawCall(programPath, path, opts);
     handleClearCache(programPath, path, opts);
-    handleUseResolve(programPath, path, opts);
+    reactJpex(programPath, path, opts);
   },
 };
 

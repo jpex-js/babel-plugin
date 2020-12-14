@@ -8,9 +8,7 @@
     "alwaysStrict": true,
     "declaration": true,
     "esModuleInterop": true,
-    "types": [ "node" ],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "types": [ "node" ]
   },
   "include": [
     "src",

@@ -1,9 +1,9 @@
-import { types as t, Visitor, NodePath } from '@babel/core';
+import { NodePath, types as t, Visitor } from '@babel/core';
 import {
   getConcreteTypeName,
-  State,
   getTypeParameter,
-} from './common';
+  State,
+} from '../common';
 
 const importVisitor: Visitor<{
   found: boolean,
