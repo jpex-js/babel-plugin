@@ -22,6 +22,7 @@ const factories = (
     identifier,
     filename,
     publicPath,
+    pathAlias,
   }: State,
 ) => {
   const callee = path.node.callee;
@@ -47,22 +48,25 @@ const factories = (
       filename,
       publicPath,
       identifier,
+      pathAlias,
     }, programPath);
     if (name) {
       aliases = getImplements(
         args[0],
         filename,
         publicPath,
+        pathAlias,
         programPath,
       );
     }
   } else {
-    name = getConcreteTypeName(type, filename, publicPath, programPath);
+    name = getConcreteTypeName(type, filename, publicPath, pathAlias, programPath);
     if (name) {
       aliases = getImplements(
         type,
         filename,
         publicPath,
+        pathAlias,
         programPath,
       );
     }
@@ -77,7 +81,7 @@ const factories = (
   // if the second parameter isn't an array of dependencies, it means it's inferred
   if (callee.property.name !== 'constant') {
     const arg = path.get('arguments.1') as NodePath<any>;
-    const deps = extractFunctionParameterTypes(programPath, arg, filename, publicPath);
+    const deps = extractFunctionParameterTypes(programPath, arg, filename, publicPath, pathAlias);
     path.node.arguments.splice(1, 0, t.arrayExpression(deps.map((dep) => t.stringLiteral(dep))));
 
     if (aliases != null) {

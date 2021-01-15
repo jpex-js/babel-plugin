@@ -72,7 +72,12 @@ const typeSourceVisitor: Visitor<TypeSourceState> = {
     }
     const parent = path.parent as any;
     let source: string = parent.source.value;
-    if (parent.source.value.charAt(0) === '.') {
+    Object.keys(state.pathAlias).forEach((key) => {
+      if (source.startsWith(key)) {
+        source = source.replace(key, state.pathAlias[key]);
+      }
+    });
+    if (source.charAt(0) === '.') {
       source = join(dirname(state.filename), source);
     }
     const key = `${source}/${path.node.imported.name}`;
@@ -90,6 +95,7 @@ export default function getConcreteTypeName(
   typeNode: t.Node,
   filename: string,
   publicPath: string,
+  pathAlias: { [key: string]: string },
   programPath: NodePath<t.Program>,
 ) {
   // for a type reference we need to find where it is declared first
@@ -113,10 +119,10 @@ export default function getConcreteTypeName(
     }
 
     // we need to traverse the file to find the type declaration
-    const state = {
+    const state: TypeSourceState = {
       filename,
       publicPath,
-      programPath,
+      pathAlias,
       typeName: name,
       name: <string>null,
     };
@@ -135,6 +141,7 @@ export default function getConcreteTypeName(
     if (!cache[key]) {
       const usePublicPath = shouldUsePublicPath({
         publicPath,
+        pathAlias,
         filename: null,
         typeName: null,
         name: null,

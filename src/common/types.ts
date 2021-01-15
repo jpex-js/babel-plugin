@@ -6,6 +6,10 @@ export interface State {
   filename: string,
   // a public path (if set) to use instead of a full file name
   publicPath: string,
+  // aliases
+  pathAlias: {
+    [key: string]: string,
+  },
 }
 
 export interface TypeSourceState {
@@ -13,4 +17,7 @@ export interface TypeSourceState {
   filename: string,
   publicPath: string,
   name: string,
+  pathAlias: {
+    [key: string]: string,
+  },
 }

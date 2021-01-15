@@ -13,6 +13,7 @@ const alias = (
     identifier,
     filename,
     publicPath,
+    pathAlias,
   }: State
 ) => {
   const args = path.node.arguments;
@@ -28,7 +29,7 @@ const alias = (
   // eslint-disable-next-line no-plusplus
   for (let x = 0; x < 2; x++) {
     const type = getTypeParameter(path, x);
-    const name = getConcreteTypeName(type, filename, publicPath, programPath);
+    const name = getConcreteTypeName(type, filename, publicPath, pathAlias, programPath);
     if (name != null) {
       args.unshift(t.stringLiteral(name));
     }
