@@ -80,3 +80,23 @@ import { MyService } from "/src/services";
 ```
 
 This is only in terms of resolving a dependency's name, it doesn't actually update the import path.
+
+### omitIndex
+
+```ts
+boolean;
+```
+
+When registering a dependency in an index file, the index will be omitted.
+
+For example:
+
+```ts
+// /src/services/index.ts
+
+type MyService = any;
+
+jpex.service<MyService>(myService);
+```
+
+This would normally produce a type name of `type:/src/services/index/MyService`. With omitIndex it will create `type:/src/services/MyService`.

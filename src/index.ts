@@ -20,6 +20,7 @@ const mainVisitor: Visitor<{
   opts: {
     identifier: string[],
     publicPath: string | boolean,
+    omitIndex: boolean,
     pathAlias: {
       [key: string]: string,
     },
@@ -31,21 +32,24 @@ const mainVisitor: Visitor<{
       opts: {
         identifier = 'jpex',
         publicPath,
-        pathAlias,
+        // eslint-disable-next-line prefer-const
+        pathAlias = {},
+        // eslint-disable-next-line prefer-const
+        omitIndex,
       } = {},
     } = state;
-    const filename = this
+    let filename = this
       .filename
       .split('.')
       .slice(0, -1)
       .join('.')
       .replace(process.cwd(), '');
+    if (omitIndex && filename.endsWith('/index')) {
+      filename = filename.replace('/index', '');
+    }
     identifier = [].concat(identifier);
     if (publicPath === true) {
       publicPath = require(resolve('./package.json')).name;
-    }
-    if (pathAlias == null) {
-      pathAlias = {};
     }
     const opts = {
       identifier,
