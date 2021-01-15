@@ -25,6 +25,7 @@ const encase = (
   {
     filename,
     publicPath,
+    pathAlias,
   }: State,
 ) => {
   const callee = path.node.callee;
@@ -45,7 +46,7 @@ const encase = (
   }
 
   const arg = path.get('arguments.0') as NodePath<any>;
-  const deps = extractFunctionParameterTypes(programPath, arg, filename, publicPath);
+  const deps = extractFunctionParameterTypes(programPath, arg, filename, publicPath, pathAlias);
   path.node.arguments.splice(0, 0, t.arrayExpression(deps.map((dep) => t.stringLiteral(dep))));
 };
 

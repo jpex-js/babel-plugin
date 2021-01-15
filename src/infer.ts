@@ -13,6 +13,7 @@ const infer = (
     identifier,
     filename,
     publicPath,
+    pathAlias,
   }: State,
 ) => {
   if (!isJpexCall(path, identifier, 'infer')) {
@@ -20,7 +21,7 @@ const infer = (
   }
 
   const type = getTypeParameter(path);
-  const name = getConcreteTypeName(type, filename, publicPath, programPath);
+  const name = getConcreteTypeName(type, filename, publicPath, pathAlias, programPath);
 
   if (name != null) {
     path.replaceWith(

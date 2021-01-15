@@ -7,6 +7,7 @@ const visitor: Visitor<{
   typeName: string,
   filename: string,
   publicPath: string,
+  pathAlias: { [key: string]: string },
   programPath: NodePath<t.Program>,
 }> = {
   Class(path, state) {
@@ -15,6 +16,7 @@ const visitor: Visitor<{
         path.node,
         state.filename,
         state.publicPath,
+        state.pathAlias,
         state.programPath,
       );
     }
@@ -27,6 +29,7 @@ export default function getTypeofNode(
   {
     filename,
     publicPath,
+    pathAlias,
   }: State,
   programPath: NodePath<t.Program>,
 ): string {
@@ -36,12 +39,13 @@ export default function getTypeofNode(
       typeName: node.name,
       filename,
       publicPath,
+      pathAlias,
       programPath,
     };
     programPath.traverse(visitor, state);
     return state.name;
   }
   if (t.isClassExpression(node)) {
-    return getConcreteTypeName(node, filename, publicPath, programPath);
+    return getConcreteTypeName(node, filename, publicPath, pathAlias, programPath);
   }
 }

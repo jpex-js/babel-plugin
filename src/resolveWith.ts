@@ -13,6 +13,7 @@ const resolveWith = (
     identifier,
     filename,
     publicPath,
+    pathAlias,
   }: State,
 ) => {
   const args = path.node.arguments;
@@ -22,7 +23,7 @@ const resolveWith = (
   }
 
   const type = getTypeParameter(path);
-  const name = getConcreteTypeName(type, filename, publicPath, programPath);
+  const name = getConcreteTypeName(type, filename, publicPath, pathAlias, programPath);
   if (name != null) {
     args.unshift(t.stringLiteral(name));
   } else if (t.isTSTypeLiteral(type) || t.isTSFunctionType(type)) {
@@ -39,7 +40,7 @@ const resolveWith = (
   let i = 1;
   let namedType = getTypeParameter(path, i);
   while (namedType) {
-    const name = getConcreteTypeName(namedType, filename, publicPath, programPath);
+    const name = getConcreteTypeName(namedType, filename, publicPath, pathAlias, programPath);
     if (name != null) {
       const value = args[1].elements[i - 1];
       const key = t.stringLiteral(name);

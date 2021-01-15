@@ -7,6 +7,7 @@ const visitor: Visitor<{
   filename: string,
   publicPath: string,
   programPath: any,
+  pathAlias: { [key: string]: string },
 }> = {
   Class(path, state) {
     if (path.node.id?.name === state.typeName) {
@@ -15,6 +16,7 @@ const visitor: Visitor<{
           node,
           state.filename,
           state.publicPath,
+          state.pathAlias,
           state.programPath,
         );
       })
@@ -30,6 +32,7 @@ export default function getImplements(
   node: any,
   filename: string,
   publicPath: string,
+  pathAlias: { [key: string]: string },
   programPath: NodePath<t.Program>,
 ): string[] {
   if (t.isIdentifier(node)) {
@@ -38,6 +41,7 @@ export default function getImplements(
       typeName: node.name,
       filename,
       publicPath,
+      pathAlias,
       programPath,
     };
     programPath.traverse(visitor, state);
@@ -49,6 +53,7 @@ export default function getImplements(
         node,
         filename,
         publicPath,
+        pathAlias,
         programPath,
       );
     }).filter(Boolean);

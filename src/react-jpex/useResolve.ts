@@ -26,6 +26,7 @@ const useResolve = (
   {
     filename,
     publicPath,
+    pathAlias,
   }: State,
 ) => {
   const callee = path.node.callee;
@@ -46,7 +47,7 @@ const useResolve = (
   }
 
   const type = getTypeParameter(path);
-  const name = getConcreteTypeName(type, filename, publicPath, programPath);
+  const name = getConcreteTypeName(type, filename, publicPath, pathAlias, programPath);
   if (name != null) {
     args.unshift(t.stringLiteral(name));
   } else if (t.isTSTypeLiteral(type) || t.isTSFunctionType(type)) {

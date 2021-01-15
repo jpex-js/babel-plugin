@@ -13,6 +13,7 @@ const clearCache = (
     identifier,
     filename,
     publicPath,
+    pathAlias,
   }: State) => {
   const args = path.node.arguments;
 
@@ -21,7 +22,7 @@ const clearCache = (
   }
   if (args.length === 0) {
     const type = getTypeParameter(path);
-    const name = getConcreteTypeName(type, filename, publicPath, programPath);
+    const name = getConcreteTypeName(type, filename, publicPath, pathAlias, programPath);
     if (name != null) {
       args.unshift(t.stringLiteral(name));
     }

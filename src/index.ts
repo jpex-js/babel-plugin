@@ -20,6 +20,9 @@ const mainVisitor: Visitor<{
   opts: {
     identifier: string[],
     publicPath: string | boolean,
+    pathAlias: {
+      [key: string]: string,
+    },
   },
 }> = {
   CallExpression(path, state) {
@@ -28,6 +31,7 @@ const mainVisitor: Visitor<{
       opts: {
         identifier = 'jpex',
         publicPath,
+        pathAlias,
       } = {},
     } = state;
     const filename = this
@@ -40,9 +44,13 @@ const mainVisitor: Visitor<{
     if (publicPath === true) {
       publicPath = require(resolve('./package.json')).name;
     }
+    if (pathAlias == null) {
+      pathAlias = {};
+    }
     const opts = {
       identifier,
       filename,
+      pathAlias,
       publicPath: (publicPath as string),
     };
     handleFactoryCalls(programPath, path, opts);
