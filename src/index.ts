@@ -10,6 +10,7 @@ import handleRawCall from './raw';
 import handleResolveCall from './resolve';
 import handleResolveWithCall from './resolveWith';
 import reactJpex from './react-jpex';
+import node from './node';
 
 declare const require: any;
 declare const process: any;
@@ -66,6 +67,7 @@ const mainVisitor: Visitor<{
     handleRawCall(programPath, path, opts);
     handleClearCache(programPath, path, opts);
     reactJpex(programPath, path, opts);
+    node(programPath, path, opts);
   },
 };
 
