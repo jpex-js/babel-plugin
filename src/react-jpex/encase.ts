@@ -1,17 +1,18 @@
 import { NodePath, types as t, Visitor } from '@babel/core';
-import {
-  extractFunctionParameterTypes,
-  State,
-} from '../common';
+import { extractFunctionParameterTypes, State } from '../common';
 
 const importVisitor: Visitor<{
-  found: boolean,
+  found: boolean;
 }> = {
   ImportSpecifier(path, state) {
     if (path.node.imported.name === 'encase') {
       if (path.node.local.name === 'encase') {
-        // @ts-ignore
-        if (path.parent.source.value === 'react-jpex') {
+        if (
+          // @ts-ignore
+          path.parent.source.value === 'react-jpex' ||
+          // @ts-ignore
+          path.parent.source.value === '@jpex-js/vue'
+        ) {
           state.found = true;
         }
       }
@@ -22,11 +23,7 @@ const importVisitor: Visitor<{
 const encase = (
   programPath: NodePath<t.Program>,
   path: NodePath<any>,
-  {
-    filename,
-    publicPath,
-    pathAlias,
-  }: State,
+  { filename, publicPath, pathAlias }: State
 ) => {
   const callee = path.node.callee;
   const args = path.node.arguments;
@@ -46,8 +43,18 @@ const encase = (
   }
 
   const arg = path.get('arguments.0') as NodePath<any>;
-  const deps = extractFunctionParameterTypes(programPath, arg, filename, publicPath, pathAlias);
-  path.node.arguments.splice(0, 0, t.arrayExpression(deps.map((dep) => t.stringLiteral(dep))));
+  const deps = extractFunctionParameterTypes(
+    programPath,
+    arg,
+    filename,
+    publicPath,
+    pathAlias
+  );
+  path.node.arguments.splice(
+    0,
+    0,
+    t.arrayExpression(deps.map((dep) => t.stringLiteral(dep)))
+  );
 };
 
 export default encase;

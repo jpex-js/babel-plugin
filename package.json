@@ -10,7 +10,8 @@
     "build:js": "rollup --config ./rollup.config.js",
     "build": "yarn build:prepare && yarn build:js",
     "prepublishOnly": "yarn build",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "ci": "yarn install && yarn lint && yarn test && yarn build"
   },
   "repository": {
     "type": "git",

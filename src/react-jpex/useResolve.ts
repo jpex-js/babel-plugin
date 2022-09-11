@@ -1,18 +1,18 @@
 import { NodePath, types as t, Visitor } from '@babel/core';
-import {
-  getConcreteTypeName,
-  getTypeParameter,
-  State,
-} from '../common';
+import { getConcreteTypeName, getTypeParameter, State } from '../common';
 
 const importVisitor: Visitor<{
-  found: boolean,
+  found: boolean;
 }> = {
   ImportSpecifier(path, state) {
     if (path.node.imported.name === 'useResolve') {
       if (path.node.local.name === 'useResolve') {
-        // @ts-ignore
-        if (path.parent.source.value === 'react-jpex') {
+        if (
+          // @ts-ignore
+          path.parent.source.value === 'react-jpex' ||
+          // @ts-ignore
+          path.parent.source.value === '@jpex-js/vue'
+        ) {
           state.found = true;
         }
       }
@@ -23,11 +23,7 @@ const importVisitor: Visitor<{
 const useResolve = (
   programPath: NodePath<t.Program>,
   path: NodePath<any>,
-  {
-    filename,
-    publicPath,
-    pathAlias,
-  }: State,
+  { filename, publicPath, pathAlias }: State
 ) => {
   const callee = path.node.callee;
   const args = path.node.arguments;
@@ -47,7 +43,13 @@ const useResolve = (
   }
 
   const type = getTypeParameter(path);
-  const name = getConcreteTypeName(type, filename, publicPath, pathAlias, programPath);
+  const name = getConcreteTypeName(
+    type,
+    filename,
+    publicPath,
+    pathAlias,
+    programPath
+  );
   if (name != null) {
     args.unshift(t.stringLiteral(name));
   } else if (t.isTSTypeLiteral(type) || t.isTSFunctionType(type)) {
