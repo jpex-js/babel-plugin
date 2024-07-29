@@ -1,6 +1,6 @@
 {
   "name": "@jpex-js/babel-plugin",
-  "version": "1.6.0",
+  "version": "1.8.0",
   "main": "dist/index.js",
   "scripts": {
     "test": "yarn build && BABEL_DISABLE_CACHE=1 ava",
