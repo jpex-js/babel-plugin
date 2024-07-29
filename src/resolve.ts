@@ -9,21 +9,22 @@ import {
 const resolve = (
   programPath: NodePath<t.Program>,
   path: NodePath<any>,
-  {
-    identifier,
-    filename,
-    publicPath,
-    pathAlias,
-  }: State,
+  { identifier, filename, publicPath, pathAlias }: State
 ) => {
   const args = path.node.arguments;
 
-  if (!isJpexCall(path, identifier, 'resolve')) {
+  if (!isJpexCall(path, identifier, [ 'resolve', 'resolveAsync' ])) {
     return;
   }
 
   const type = getTypeParameter(path);
-  const name = getConcreteTypeName(type, filename, publicPath, pathAlias, programPath);
+  const name = getConcreteTypeName(
+    type,
+    filename,
+    publicPath,
+    pathAlias,
+    programPath
+  );
   if (name != null) {
     args.unshift(t.stringLiteral(name));
   } else if (t.isTSTypeLiteral(type) || t.isTSFunctionType(type)) {

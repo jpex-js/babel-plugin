@@ -1,19 +1,44 @@
-import { types as t, NodePath } from '@babel/core';
-import {
-  getConcreteTypeName,
-  State,
-  getTypeParameter,
-  isJpexCall,
-} from './common';
+import { NodePath, types as t, Visitor } from '@babel/core';
+import { getConcreteTypeName, getTypeParameter, State } from '../common';
 
-const resolveWith = (
+const importVisitor: Visitor<{
+  found: boolean;
+}> = {
+  ImportSpecifier(path, state) {
+    if (path.node.imported.name === 'useResolveWith') {
+      if (path.node.local.name === 'useResolveWith') {
+        if (
+          // @ts-ignore
+          path.parent.source.value === 'react-jpex' ||
+          // @ts-ignore
+          path.parent.source.value === '@jpex-js/vue'
+        ) {
+          state.found = true;
+        }
+      }
+    }
+  },
+};
+
+const useResolveWith = (
   programPath: NodePath<t.Program>,
   path: NodePath<any>,
-  { identifier, filename, publicPath, pathAlias }: State
+  { filename, publicPath, pathAlias }: State
 ) => {
+  const callee = path.node.callee;
   const args = path.node.arguments;
 
-  if (!isJpexCall(path, identifier, [ 'resolveWith', 'resolveWithAsync' ])) {
+  if (callee?.name !== 'useResolveWith') {
+    return;
+  }
+  const state = { found: false };
+  programPath.traverse(importVisitor, state);
+
+  if (!state.found) {
+    return;
+  }
+
+  if (args.length > 0 && t.isStringLiteral(args[0])) {
     return;
   }
 
@@ -29,8 +54,6 @@ const resolveWith = (
     args.unshift(t.stringLiteral(name));
   } else if (t.isTSTypeLiteral(type) || t.isTSFunctionType(type)) {
     throw new Error('Currently resolving with a literal type is not supported');
-  } else {
-    return;
   }
 
   if (!t.isArrayExpression(args[1])) {
@@ -66,4 +89,4 @@ const resolveWith = (
   args.splice(1, 1, t.objectExpression(namedDependencies));
 };
 
-export default resolveWith;
+export default useResolveWith;

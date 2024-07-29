@@ -1,7 +1,7 @@
 import { NodePath, types as t, Visitor } from '@babel/core';
 import { getConcreteTypeName, getTypeParameter, State } from '../common';
 
-const RESOLVE_METHODS = [ 'resolve', 'resolveAsync' ];
+const RESOLVE_METHODS = [ 'resolveWith', 'resolveWithAsync' ];
 
 const importVisitor: Visitor<{
   found: boolean;
@@ -53,6 +53,38 @@ const resolve = (
   } else if (t.isTSTypeLiteral(type) || t.isTSFunctionType(type)) {
     throw new Error('Currently resolving with a literal type is not supported');
   }
+
+  if (!t.isArrayExpression(args[1])) {
+    return;
+  }
+
+  const namedDependencies: t.ObjectProperty[] = [];
+  let i = 1;
+  let namedType = getTypeParameter(path, i);
+  while (namedType) {
+    const name = getConcreteTypeName(
+      namedType,
+      filename,
+      publicPath,
+      pathAlias,
+      programPath
+    );
+    if (name != null) {
+      const value = args[1].elements[i - 1];
+      const key = t.stringLiteral(name);
+      // @ts-ignore
+      const prop = t.objectProperty(key, value);
+      namedDependencies.push(prop);
+    } else if (t.isTSTypeLiteral(type) || t.isTSFunctionType(type)) {
+      throw new Error(
+        'Currently resolving with a literal type is not supported'
+      );
+    }
+    // eslint-disable-next-line no-plusplus
+    namedType = getTypeParameter(path, ++i);
+  }
+
+  args.splice(1, 1, t.objectExpression(namedDependencies));
 };
 
 export default resolve;

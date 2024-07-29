@@ -1,9 +1,9 @@
 import { transformAsync } from '@babel/core';
 import test from 'ava';
 
-test('encase', async(t) => {
+test('encase', async (t) => {
   const code = `
-    import { useResolve, encase } from 'react-jpex';
+    import { useResolve, encase, useResolveWith } from 'react-jpex';
     
     type Foo = string;
     type Bar = number;
@@ -11,6 +11,7 @@ test('encase', async(t) => {
 
     const Component = encase((foo: Foo, bar: Bar) => (props: {}) => {
       const baz = useResolve<Baz>();
+      const baz2 = useResolveWith<Baz, Foo, Bar>([ 'oof', 'rab' ]);
 
       return foo + bar + baz;
     })
@@ -19,14 +20,8 @@ test('encase', async(t) => {
     filename: './code.ts',
     babelrc: false,
     configFile: false,
-    presets: [
-      '@babel/preset-typescript',
-    ],
-    plugins: [
-      [
-        './dist',
-      ],
-    ],
+    presets: ['@babel/preset-typescript'],
+    plugins: [['./dist']],
   });
 
   t.snapshot(actual);

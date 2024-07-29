@@ -9,21 +9,12 @@ import {
   getImplements,
 } from './common';
 
-const FACTORY_METHODS = [
-  'factory',
-  'service',
-  'constant',
-];
+const FACTORY_METHODS = [ 'factory', 'factoryAsync', 'service', 'constant' ];
 
 const factories = (
   programPath: NodePath<t.Program>,
   path: NodePath<any>,
-  {
-    identifier,
-    filename,
-    publicPath,
-    pathAlias,
-  }: State,
+  { identifier, filename, publicPath, pathAlias }: State
 ) => {
   const callee = path.node.callee;
   const args = path.node.arguments;
@@ -44,30 +35,40 @@ const factories = (
   let aliases: string[];
 
   if (type == null) {
-    name = getTypeofNode(args[0], {
-      filename,
-      publicPath,
-      identifier,
-      pathAlias,
-    }, programPath);
+    name = getTypeofNode(
+      args[0],
+      {
+        filename,
+        publicPath,
+        identifier,
+        pathAlias,
+      },
+      programPath
+    );
     if (name) {
       aliases = getImplements(
         args[0],
         filename,
         publicPath,
         pathAlias,
-        programPath,
+        programPath
       );
     }
   } else {
-    name = getConcreteTypeName(type, filename, publicPath, pathAlias, programPath);
+    name = getConcreteTypeName(
+      type,
+      filename,
+      publicPath,
+      pathAlias,
+      programPath
+    );
     if (name) {
       aliases = getImplements(
         type,
         filename,
         publicPath,
         pathAlias,
-        programPath,
+        programPath
       );
     }
   }
@@ -81,15 +82,23 @@ const factories = (
   // if the second parameter isn't an array of dependencies, it means it's inferred
   if (callee.property.name !== 'constant') {
     const arg = path.get('arguments.1') as NodePath<any>;
-    const deps = extractFunctionParameterTypes(programPath, arg, filename, publicPath, pathAlias);
-    path.node.arguments.splice(1, 0, t.arrayExpression(deps.map((dep) => t.stringLiteral(dep))));
+    const deps = extractFunctionParameterTypes(
+      programPath,
+      arg,
+      filename,
+      publicPath,
+      pathAlias
+    );
+    path.node.arguments.splice(
+      1,
+      0,
+      t.arrayExpression(deps.map((dep) => t.stringLiteral(dep)))
+    );
 
     if (aliases != null) {
       const property = t.objectProperty(
         t.stringLiteral('alias'),
-        t.arrayExpression(
-          aliases.map((alias) => t.stringLiteral(alias)),
-        ),
+        t.arrayExpression(aliases.map((alias) => t.stringLiteral(alias)))
       );
       const arg = args[3];
       if (arg == null) {
