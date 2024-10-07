@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import handleAliasCall from './alias';
 import handleClearCache from './clearCache';
 import handleEncaseCall from './encase';
+import handleDeferredCall from './defer';
 import handleFactoryCalls from './factories';
 import handleInferCall from './infer';
 import handleRawCall from './raw';
@@ -16,16 +17,16 @@ declare const require: any;
 declare const process: any;
 
 const mainVisitor: Visitor<{
-  programPath: NodePath<any>,
-  filename: string,
+  programPath: NodePath<any>;
+  filename: string;
   opts: {
-    identifier: string[],
-    publicPath: string | boolean,
-    omitIndex: boolean,
+    identifier: string[];
+    publicPath: string | boolean;
+    omitIndex: boolean;
     pathAlias: {
-      [key: string]: string,
-    },
-  },
+      [key: string]: string;
+    };
+  };
 }> = {
   CallExpression(path, state) {
     const { programPath } = this;
@@ -39,8 +40,7 @@ const mainVisitor: Visitor<{
         omitIndex,
       } = {},
     } = state;
-    let filename = this
-      .filename
+    let filename = this.filename
       .split('.')
       .slice(0, -1)
       .join('.')
@@ -56,12 +56,13 @@ const mainVisitor: Visitor<{
       identifier,
       filename,
       pathAlias,
-      publicPath: (publicPath as string),
+      publicPath: publicPath as string,
     };
     handleFactoryCalls(programPath, path, opts);
     handleResolveCall(programPath, path, opts);
     handleResolveWithCall(programPath, path, opts);
     handleEncaseCall(programPath, path, opts);
+    handleDeferredCall(programPath, path, opts);
     handleAliasCall(programPath, path, opts);
     handleInferCall(programPath, path, opts);
     handleRawCall(programPath, path, opts);
@@ -71,20 +72,18 @@ const mainVisitor: Visitor<{
   },
 };
 
-export default declare(
-  (api: any) => {
-    api.assertVersion(7);
+export default declare((api: any) => {
+  api.assertVersion(7);
 
-    return {
-      visitor: {
-        Program(programPath: NodePath<any>, state: any) {
-          programPath.traverse(mainVisitor, {
-            programPath,
-            opts: state.opts,
-            filename: state.file.opts.filename,
-          });
-        },
+  return {
+    visitor: {
+      Program(programPath: NodePath<any>, state: any) {
+        programPath.traverse(mainVisitor, {
+          programPath,
+          opts: state.opts,
+          filename: state.file.opts.filename,
+        });
       },
-    };
-  },
-);
+    },
+  };
+});

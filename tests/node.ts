@@ -4,7 +4,7 @@ import { transformAsync } from '@babel/core';
 test('basic', async (t) => {
   const code = `
     // transforms code
-    import { encase, resolve, resolveWith, resolveAsync, resolveWithAsync } from '@jpex-js/node';
+    import { encase, resolve, resolveWith, resolveAsync, resolveWithAsync, defer } from '@jpex-js/node';
     
     type Foo = string;
     type Bar = number;
@@ -16,6 +16,7 @@ test('basic', async (t) => {
     const d = resolveWith<Foo, Bar>(['bar']);
     const e = resolveAsync<Foo>();
     const f = resolveWithAsync<Foo, Bar>(['bar']);
+    const g = defer<Baz>();
   `;
   const { code: actual } = await transformAsync(code, {
     filename: './code.ts',

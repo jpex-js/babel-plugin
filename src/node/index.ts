@@ -3,6 +3,7 @@ import { State } from '../common';
 import encase from './encase';
 import resolve from './resolve';
 import resolveWith from './resolveWith';
+import defer from './defer';
 
 const node = (
   programPath: NodePath<t.Program>,
@@ -10,6 +11,7 @@ const node = (
   state: State
 ) => {
   encase(programPath, path, state);
+  defer(programPath, path, state);
   resolve(programPath, path, state);
   resolveWith(programPath, path, state);
 };
